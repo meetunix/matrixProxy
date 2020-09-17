@@ -32,16 +32,16 @@ import de.nachtsieb.matrixService.restClient.RestClientApache;
 /* used api endpoints with example
  * 
  * /_matrix/client/r0/joined_rooms -> lists all joined rooms (GET)
- * 		https://nachtsieb.de:8448/_matrix/client/r0/joined_rooms?access_token=
+ * 		https://localhost:8448/_matrix/client/r0/joined_rooms?access_token=
  * 
  * /_matrix/client/r0/join/{roomIdOrAlias} (POST) -->
- * 		https://nachtsieb.de:8448/_matrix/client/r0/join/%23klingel%3Anachtsieb.de?access_token=
+ * 		https://localhost:8448/_matrix/client/r0/join/%23klingel%3Alocalhost?access_token=
  * 
  * /_matrix/client/r0/rooms/{roomId}/send/{eventType}/{txnId} (PUT)
- * 		https://nachtsieb.de:8448/_matrix/client/r0/rooms/!ljXeIjSnUvuZzcPcLO%3Anachtsieb.de/send/m.room.message/35?a
+ * 		https://localhost:8448/_matrix/client/r0/rooms/!ljXeIjSnUvuZzcPcLO%3Alocalhost/send/m.room.message/35?a
  * 
  * /_matrix/client/r0/logout
- * 		https://nachtsieb.de:8448/_matrix/client/r0/logout?access_token=
+ * 		https://localhost:8448/_matrix/client/r0/logout?access_token=
  */
 	
 
