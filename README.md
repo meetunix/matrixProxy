@@ -2,9 +2,9 @@
 
 A small web service that acts as a proxy for a Matrix homeserver. It receives a simple message and
 does a retransmit to a Matrix homeserver. Very useful for IoT devices who cant handle the Matrix
-api due to ressource restrictions.
+api due to resource restrictions.
 
-The state of the project is in alpha but its working.
+The state of the project is alpha but its working.
 
 ## prerequisites
 
