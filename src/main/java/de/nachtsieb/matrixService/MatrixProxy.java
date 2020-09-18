@@ -29,15 +29,15 @@ import picocli.CommandLine.Option;
  *
  */
 
-@Command(description = "A tiny Matrix Proxy for sending simple text messages to a room",
-			mixinStandardHelpOptions = true, name = "matrixProxy", version = "tinyWebServ 0.1.0")
+@Command(description = "A tiny Matrix proxy for sending simple text messages to a room",
+			mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.1.0")
 
 public class MatrixProxy implements Callable<String> {
 
     // Base URI the Grizzly HTTP server will listen on
 	@Option(names = { "-v", "--verbose"}, description = "Be more verbose")
 	private boolean verbose = false; //TODO
-	@Option(names = { "-c", "--conf"}, description = "full path to the config file")
+	@Option(names = { "-c", "--conf"}, required = true, description = "full path to the config file")
 	private String confFilePath = null;
 
 	public static String baseURI;
