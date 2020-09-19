@@ -34,9 +34,8 @@ import picocli.CommandLine.Option;
 
 public class MatrixProxy implements Callable<String> {
 
-    // Base URI the Grizzly HTTP server will listen on
 	@Option(names = { "-v", "--verbose"}, description = "Be more verbose")
-	private boolean verbose = false; //TODO
+	private boolean verbose = false; 
 	@Option(names = { "-c", "--conf"}, required = true, description = "full path to the config file")
 	private String confFilePath = null;
 
@@ -45,6 +44,7 @@ public class MatrixProxy implements Callable<String> {
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
+     * 
      * @return Grizzly HTTP server.
      */
     public static HttpServer startServer() {
@@ -70,13 +70,14 @@ public class MatrixProxy implements Callable<String> {
 	@Override
 	public String call() throws Exception {
 
-		MatrixLogger.initiate();
+		MatrixLogger.initiate(verbose);
 
 		loadConfFile(confFilePath);
 
         final HttpServer server = startServer();
 
-        System.out.println(String.format("Jersey app started\nHit enter to stop it...", baseURI));
+        System.out.println(String.format(
+        		"\nmatrixProxy started and listen on %s\nHit enter to stop it...", baseURI));
         System.in.read();
 
         server.shutdownNow();
@@ -103,18 +104,19 @@ public class MatrixProxy implements Callable<String> {
 			MatrixLogger.info("using config file " + confFilePath
 					+ "\nbase URI: " + baseURI
 					+ "\nhomeserver: " + homeserver
-					+ "\nlogin: " + login
+					+ "\nlogin: " + login + "\n"
 					);
-
 
 		} catch (InvalidPathException | IOException e) {
 			MatrixLogger.severe("unable to load config file from given path " + confFilePath);
+			MatrixLogger.severe(e.toString());
 			System.exit(-1);
 		}
 	}
 
     /**
      * Main method.
+     * 
      * @param args
      * @throws IOException
      */
@@ -122,5 +124,4 @@ public class MatrixProxy implements Callable<String> {
     	int exitCode = new CommandLine(new MatrixProxy()).execute(args);
     	System.exit(exitCode);
     }
-
 }

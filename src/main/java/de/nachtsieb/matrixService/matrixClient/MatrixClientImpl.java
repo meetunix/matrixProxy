@@ -60,7 +60,6 @@ public class MatrixClientImpl implements MatrixClient {
 	
 	private RestClient rest;
 
-	// jackson databinding
 	private ObjectMapper mapper;
 	
 
@@ -114,7 +113,7 @@ public class MatrixClientImpl implements MatrixClient {
 	/**
 	 * This method tries to joins the current user to the previous given room.  
 	 * 
-	 * @return the roo id sned by the server
+	 * @return the room id sned by the server
 	 * @throws URISyntaxException 
 	 * @throws MatrixClientException 
 	 */
@@ -168,7 +167,6 @@ public class MatrixClientImpl implements MatrixClient {
 		if (node == null) {
 			throw new MatrixClientException("unable to join the room " + room);
 		} 
-
 	}
 
 	@Override

@@ -33,14 +33,12 @@ public class MatrixResource {
     	
 		try {
 			
-			MatrixLogger.finer("request arrived");
-			
 			// map json-object to java-object
 			ObjectMapper mapper = new ObjectMapper();
 			Message msg = mapper.readValue(postString, Message.class);
-			
-			MatrixLogger.info(msg.getRoom());
 
+			MatrixLogger.finer("request arrived for room " + msg.getRoom() );
+			
 			MatrixClient mxClient = new MatrixClientImpl(
 					config.getLogin(),
 					config.getPassword(),
@@ -66,9 +64,5 @@ public class MatrixResource {
 		
 		// matches if one of the above exceptions is thrown
 		return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		
     }
-			
-		
-
 }

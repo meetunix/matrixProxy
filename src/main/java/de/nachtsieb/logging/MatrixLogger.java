@@ -8,27 +8,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-public abstract class MatrixLogger {
+public final class MatrixLogger {
 	
 	private static final Logger log = Logger.getLogger(MatrixLogger.class.getCanonicalName());
 	public static final String DEFAULT_BASE_PATH = "%t";
 	public static final String DEFAULT_LOG_FILE_NAME = "/MatrixProxy%g.log";
 	public static final int DEFAULT_MAX_FILE_SIZE = 10485760; // byte -> 10 MiB
 	public static final int DEFAULT_MAX_FILES = 3; 
+	public static final boolean DEFAULT_VERBOSITY = false; 
 	
-	
-	public static void initiate() {
-		initiate(DEFAULT_BASE_PATH, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES);
+	public static void initiate(boolean verbose) {
+		initiate(DEFAULT_BASE_PATH, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES, verbose);
 	}
 
-	public static void initiate(String logPath, int maxFileSize) {
-		initiate(logPath, maxFileSize, DEFAULT_MAX_FILES);
+	public static void initiate(String logPath, int maxFileSize, boolean verbose) {
+		initiate(logPath, maxFileSize, DEFAULT_MAX_FILES, verbose );
 	}
 
-	public static void initiate(String logPath) {
-		initiate(logPath, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES);
+	public static void initiate(String logPath, boolean verbose) {
+		initiate(logPath, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES, verbose);
 	}
-
 	
 	/**
 	 * 
@@ -42,11 +41,14 @@ public abstract class MatrixLogger {
 	 * @param logPath		The base path to the logging files
 	 * @param maxFileSize	The maximum size in bytes a log file is able to grow
 	 * @param maxFiles		The maximum amount of log files in logPath
+	 * @param verbose		Boolean value
 	 */
-	public static void initiate(String logPath, int maxFileSize, int maxFiles ) {
+	public static void initiate(String logPath, int maxFileSize, int maxFiles, boolean verbose) {
 
-		
-		log.setLevel(Level.FINER);
+		if (verbose)
+			log.setLevel(Level.FINER);
+		else
+			log.setLevel(Level.INFO);
 		
 		// a intuitive log format: "LEVEL [TIME]: (SOURCE) - MESSAGE"
 		System.setProperty(
@@ -72,15 +74,16 @@ public abstract class MatrixLogger {
 		try {
 
 			Handler handler = new FileHandler(logPath, maxFileSize, maxFiles);
-			handler.setLevel(Level.FINER);
+			// set same file log level like console log level
+			handler.setLevel(log.getLevel()); 
 			handler.setFormatter(new SimpleFormatter());
 			log.addHandler(handler);
 
-			log.info(String.format("%s\n%-16s: %s\n%-16s: %s\n%-16s: %s\n%-16s: %s\n",
-						"file logger successfull started with:",
+			log.info(String.format("%s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n",
+						"Logger successfull started with:",
 						"LOG_LEVEL", log.getLevel(),
-						"FH_LEVEL", handler.getLevel(),
-						"MAX_FILE_SIZE", maxFileSize,
+						"FILE_LOG_LEVEL", handler.getLevel(),
+						"MAX_FILE_SIZE (MiB)", maxFileSize / 1024 * 1024 ,
 						"MAX_FILES", maxFiles					
 					));
 			
@@ -90,9 +93,9 @@ public abstract class MatrixLogger {
 			h.setLevel(Level.FINER);
 			log.addHandler(h);
 
-			MatrixLogger.finer("log files not created due to following excpetion issues");
-			MatrixLogger.finer("using console logger with LEVEL " + h.getLevel());
-			MatrixLogger.finer(e.toString());
+			MatrixLogger.warn("log files not created due to following exception:");
+			MatrixLogger.warn(e.toString());
+			MatrixLogger.warn("using console logger with LEVEL " + h.getLevel());
 		}
 		
 	}
@@ -141,7 +144,4 @@ public abstract class MatrixLogger {
 	public static void finer(String message) {
 		log.finer(message);
 	}
-
-	
-
 }
