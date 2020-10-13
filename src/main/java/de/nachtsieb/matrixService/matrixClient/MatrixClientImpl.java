@@ -15,7 +15,7 @@ import de.nachtsieb.matrixService.entities.MatrixLogin;
 import de.nachtsieb.matrixService.entities.MatrixMessage;
 import de.nachtsieb.matrixService.exceptions.MatrixClientException;
 import de.nachtsieb.matrixService.restClient.RestClient;
-import de.nachtsieb.matrixService.restClient.RestClientApache;
+import de.nachtsieb.matrixService.restClient.RestClientOld;
 
 /**
  * Simple wrapper class for the Matrix client server api. Handles:
@@ -71,7 +71,7 @@ public class MatrixClientImpl implements MatrixClient {
 		this.room = room;
 		this.homeserver = homeserver;
 
-		this.rest = new RestClientApache();
+		this.rest = new RestClientOld();
 		this.mapper = new ObjectMapper();
 
 		this.accessToken = loginAndGetAccessToken();
