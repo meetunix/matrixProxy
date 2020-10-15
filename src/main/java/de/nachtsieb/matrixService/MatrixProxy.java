@@ -30,7 +30,7 @@ import picocli.CommandLine.Option;
  */
 
 @Command(description = "A tiny Matrix proxy for sending simple text messages to a room",
-			mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.1.0")
+			mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.2.0")
 
 public class MatrixProxy implements Callable<String> {
 

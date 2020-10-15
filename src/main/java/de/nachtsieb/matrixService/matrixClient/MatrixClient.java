@@ -17,8 +17,8 @@ public interface MatrixClient {
 	
 	/**
 	 * Performs a logout out for the current used session.
-	 * @throws MatrixClientException 
 	 * 
+	 * @throws MatrixClientException 
 	 */
 	public void logout() throws MatrixClientException;
 
