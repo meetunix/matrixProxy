@@ -114,7 +114,7 @@
 	</build>
 
 	<properties>
-		<jersey.version>2.33</jersey.version>
+		<jersey.version>2.34</jersey.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
