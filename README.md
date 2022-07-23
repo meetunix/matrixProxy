@@ -56,6 +56,7 @@ configured user is not member of the given room, it will be added.
 
 ## Docker
 
+    docker build -t matrix_proxy .
     docker run -d -p 0.0.0.0:7654:7654 -v "/etc/matrixProxy:/etc/matrixProxy" -v "$(pwd)/matrix-proxy-logs:/tmp/logs" matrix_proxy
 
 

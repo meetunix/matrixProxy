@@ -32,13 +32,12 @@ public final class MatrixLogger {
   }
 
   /**
-   * 
    * Set up the logging system. Has to be called first.
-   * 
-   * Allowed ranges:
-   * 
-   * maxFileSize: [102400,134217728] 100 KiB to 128 MiB maxFiles: [1,1024]
-   * 
+   *
+   * <p>Allowed ranges:
+   *
+   * <p>maxFileSize: [102400,134217728] 100 KiB to 128 MiB maxFiles: [1,1024]
+   *
    * @param logPath The base path to the logging files
    * @param maxFileSize The maximum size in bytes a log file is able to grow
    * @param maxFiles The maximum amount of log files in logPath
@@ -46,11 +45,8 @@ public final class MatrixLogger {
    */
   public static void initiate(String logPath, int maxFileSize, int maxFiles, boolean verbose) {
 
-
-    if (verbose)
-      log.setLevel(Level.FINER);
-    else
-      log.setLevel(Level.INFO);
+    if (verbose) log.setLevel(Level.FINER);
+    else log.setLevel(Level.INFO);
 
     // a intuitive log format: "LEVEL [TIME]: (SOURCE) - MESSAGE"
     System.setProperty(
@@ -87,10 +83,18 @@ public final class MatrixLogger {
       handler.setFormatter(new SimpleFormatter());
       log.addHandler(handler);
 
-      log.info(String.format("%s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n",
-          "Logger successfull started with:", "LOG_LEVEL", log.getLevel(), "FILE_LOG_LEVEL",
-          handler.getLevel(), "MAX_FILE_SIZE (MiB)", maxFileSize / 1024 * 1024, "MAX_FILES",
-          maxFiles));
+      log.info(
+          String.format(
+              "%s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n%-20s: %s\n",
+              "Logger successfull started with:",
+              "LOG_LEVEL",
+              log.getLevel(),
+              "FILE_LOG_LEVEL",
+              handler.getLevel(),
+              "MAX_FILE_SIZE (MiB)",
+              maxFileSize / 1024 * 1024,
+              "MAX_FILES",
+              maxFiles));
 
     } catch (IOException | SecurityException e) {
 
@@ -102,13 +106,10 @@ public final class MatrixLogger {
       MatrixLogger.warn(e.toString());
       MatrixLogger.warn("using console logger with LEVEL " + h.getLevel());
     }
-
   }
 
   /**
    * Writes a log message with level SEVERE
-   * 
-   * @param message
    */
   public static void severe(String message) {
     log.severe(message);
@@ -116,8 +117,6 @@ public final class MatrixLogger {
 
   /**
    * Writes a log message with level WARNING
-   * 
-   * @param message
    */
   public static void warn(String message) {
     log.warning(message);
@@ -125,8 +124,6 @@ public final class MatrixLogger {
 
   /**
    * Writes a log message with level INFO
-   * 
-   * @param message
    */
   public static void info(String message) {
     log.info(message);
@@ -134,8 +131,6 @@ public final class MatrixLogger {
 
   /**
    * Writes an message with log level CONFIG
-   * 
-   * @param message
    */
   public static void config(String message) {
     log.config(message);
@@ -143,8 +138,6 @@ public final class MatrixLogger {
 
   /**
    * Writes an message with log level FINER
-   * 
-   * @param message
    */
   public static void finer(String message) {
     log.finer(message);

@@ -1,5 +1,6 @@
 package de.nachtsieb.matrixService;
 
+import de.nachtsieb.logging.MatrixLogger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -15,7 +16,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
-import de.nachtsieb.logging.MatrixLogger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -27,14 +27,22 @@ import picocli.CommandLine.Option;
  *
  */
 
-@Command(description = "A tiny Matrix proxy for sending simple text messages to a room",
-    mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.2.1")
-
+@Command(
+    description = "A tiny Matrix proxy for sending simple text messages to a room",
+    mixinStandardHelpOptions = true,
+    name = "matrixProxy",
+    version = "matrixProxy 0.2.2")
 public class MatrixProxy implements Callable<String> {
 
-  @Option(names = {"-v", "--verbose"}, description = "Be more verbose")
+  @Option(
+      names = {"-v", "--verbose"},
+      description = "Be more verbose")
   private boolean verbose = false;
-  @Option(names = {"-c", "--conf"}, required = true, description = "full path to the config file")
+
+  @Option(
+      names = {"-c", "--conf"},
+      required = true,
+      description = "full path to the config file")
   private String confFilePath = null;
 
   public static String baseURI;
@@ -42,7 +50,7 @@ public class MatrixProxy implements Callable<String> {
 
   /**
    * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
-   * 
+   *
    * @return Grizzly HTTP server.
    */
   public static HttpServer startServer() {
@@ -53,12 +61,13 @@ public class MatrixProxy implements Callable<String> {
     // rc.property(CommonProperties.FEATURE_AUTO_DISCOVERY_DISABLE,true);
 
     // inject an instance of the class MatrixProxyConfig to the application
-    rc.register(new AbstractBinder() {
-      @Override
-      protected void configure() {
-        bind(conf).to(MatrixProxyConfig.class);
-      }
-    });
+    rc.register(
+        new AbstractBinder() {
+          @Override
+          protected void configure() {
+            bind(conf).to(MatrixProxyConfig.class);
+          }
+        });
 
     // create and start a new instance of grizzly http server
     // exposing the Jersey application at baseURI
@@ -66,7 +75,7 @@ public class MatrixProxy implements Callable<String> {
   }
 
   @Override
-  public String call() throws Exception {
+  public String call() {
 
     MatrixLogger.initiate(verbose);
 
@@ -76,14 +85,12 @@ public class MatrixProxy implements Callable<String> {
 
     try {
 
-      while (true)
-        Thread.sleep(1000);
+      while (true) Thread.sleep(1000);
 
     } catch (Exception e) {
 
       server.shutdownNow();
       return null;
-
     }
   }
 
@@ -104,23 +111,25 @@ public class MatrixProxy implements Callable<String> {
 
       conf = new MatrixProxyConfig(homeserver, login, password);
 
-      MatrixLogger.info("using config file " + confFilePath + "\nbase URI: " + baseURI
-          + "\nhomeserver: " + homeserver + "\nlogin: " + login + "\n");
+      MatrixLogger.info(
+          "using config file "
+              + confFilePath
+              + "\nbase URI: "
+              + baseURI
+              + "\nhomeserver: "
+              + homeserver
+              + "\nlogin: "
+              + login
+              + "\n");
 
     } catch (InvalidPathException | IOException e) {
       MatrixLogger.severe("unable to load config file from given path " + confFilePath);
       MatrixLogger.severe(e.toString());
-      System.exit(-1);
+      System.exit(1);
     }
   }
 
-  /**
-   * Main method.
-   * 
-   * @param args
-   * @throws IOException
-   */
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     int exitCode = new CommandLine(new MatrixProxy()).execute(args);
     System.exit(exitCode);
   }
