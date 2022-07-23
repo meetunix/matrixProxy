@@ -2,6 +2,7 @@
 .project
 .settings
 .classpath
+*logs*
 
 #latex
 *.out

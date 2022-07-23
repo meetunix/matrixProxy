@@ -10,13 +10,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
-
 import de.nachtsieb.logging.MatrixLogger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -30,98 +28,100 @@ import picocli.CommandLine.Option;
  */
 
 @Command(description = "A tiny Matrix proxy for sending simple text messages to a room",
-			mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.2.0")
+    mixinStandardHelpOptions = true, name = "matrixProxy", version = "matrixProxy 0.2.1")
 
 public class MatrixProxy implements Callable<String> {
 
-	@Option(names = { "-v", "--verbose"}, description = "Be more verbose")
-	private boolean verbose = false; 
-	@Option(names = { "-c", "--conf"}, required = true, description = "full path to the config file")
-	private String confFilePath = null;
+  @Option(names = {"-v", "--verbose"}, description = "Be more verbose")
+  private boolean verbose = false;
+  @Option(names = {"-c", "--conf"}, required = true, description = "full path to the config file")
+  private String confFilePath = null;
 
-	public static String baseURI;
-	private static MatrixProxyConfig conf;
+  public static String baseURI;
+  private static MatrixProxyConfig conf;
 
-    /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
-     * 
-     * @return Grizzly HTTP server.
-     */
-    public static HttpServer startServer() {
-        // create a resource config that scans for JAX-RS resources and providers
-        // in de.nachtsieb.matrixService package
-        final ResourceConfig rc = new ResourceConfig().packages("de.nachtsieb.matrixService");
-        rc.property(ServerProperties.WADL_FEATURE_DISABLE, true);
-        //rc.property(CommonProperties.FEATURE_AUTO_DISCOVERY_DISABLE,true);
+  /**
+   * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
+   * 
+   * @return Grizzly HTTP server.
+   */
+  public static HttpServer startServer() {
+    // create a resource config that scans for JAX-RS resources and providers
+    // in de.nachtsieb.matrixService package
+    final ResourceConfig rc = new ResourceConfig().packages("de.nachtsieb.matrixService");
+    rc.property(ServerProperties.WADL_FEATURE_DISABLE, true);
+    // rc.property(CommonProperties.FEATURE_AUTO_DISCOVERY_DISABLE,true);
 
-        // inject an instance of the class MatrixProxyConfig to the application
-        rc.register(new AbstractBinder() {
-        	@Override
-        	protected void configure() {
-        		bind(conf).to(MatrixProxyConfig.class);
-        	}
-        });
+    // inject an instance of the class MatrixProxyConfig to the application
+    rc.register(new AbstractBinder() {
+      @Override
+      protected void configure() {
+        bind(conf).to(MatrixProxyConfig.class);
+      }
+    });
 
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at baseURI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(baseURI), rc);
+    // create and start a new instance of grizzly http server
+    // exposing the Jersey application at baseURI
+    return GrizzlyHttpServerFactory.createHttpServer(URI.create(baseURI), rc);
+  }
+
+  @Override
+  public String call() throws Exception {
+
+    MatrixLogger.initiate(verbose);
+
+    loadConfFile(confFilePath);
+
+    final HttpServer server = startServer();
+
+    try {
+
+      while (true)
+        Thread.sleep(1000);
+
+    } catch (Exception e) {
+
+      server.shutdownNow();
+      return null;
+
     }
+  }
 
-	@Override
-	public String call() throws Exception {
+  private void loadConfFile(String confFilePath) {
 
-		MatrixLogger.initiate(verbose);
+    Properties props = new Properties();
 
-		loadConfFile(confFilePath);
+    try {
 
-        final HttpServer server = startServer();
+      Path path = Paths.get(confFilePath);
+      InputStream is = Files.newInputStream(path, StandardOpenOption.READ);
+      props.load(is);
 
-        System.out.println(String.format(
-        		"\nmatrixProxy started and listen on %s\nHit enter to stop it...", baseURI));
-        System.in.read();
+      baseURI = props.getProperty("BASE_URL");
+      String homeserver = props.getProperty("HOMESERVER_URL");
+      String login = props.getProperty("HOMESERVER_USER");
+      String password = props.getProperty("HOMESERVER_PASS");
 
-        server.shutdownNow();
-		return null;
-	}
+      conf = new MatrixProxyConfig(homeserver, login, password);
 
-	private void loadConfFile(String confFilePath) {
+      MatrixLogger.info("using config file " + confFilePath + "\nbase URI: " + baseURI
+          + "\nhomeserver: " + homeserver + "\nlogin: " + login + "\n");
 
-		Properties props = new Properties();
-
-		try {
-
-			Path path = Paths.get(confFilePath);
-			InputStream is = Files.newInputStream(path, StandardOpenOption.READ);
-			props.load(is);
-
-			baseURI = props.getProperty("BASE_URL");
-			String homeserver  = props.getProperty("HOMESERVER_URL");
-			String login = props.getProperty("HOMESERVER_USER");
-			String password = props.getProperty("HOMESERVER_PASS");
-
-			conf = new MatrixProxyConfig(homeserver, login, password);
-
-			MatrixLogger.info("using config file " + confFilePath
-					+ "\nbase URI: " + baseURI
-					+ "\nhomeserver: " + homeserver
-					+ "\nlogin: " + login + "\n"
-					);
-
-		} catch (InvalidPathException | IOException e) {
-			MatrixLogger.severe("unable to load config file from given path " + confFilePath);
-			MatrixLogger.severe(e.toString());
-			System.exit(-1);
-		}
-	}
-
-    /**
-     * Main method.
-     * 
-     * @param args
-     * @throws IOException
-     */
-    public static void main(String[] args) throws IOException {
-    	int exitCode = new CommandLine(new MatrixProxy()).execute(args);
-    	System.exit(exitCode);
+    } catch (InvalidPathException | IOException e) {
+      MatrixLogger.severe("unable to load config file from given path " + confFilePath);
+      MatrixLogger.severe(e.toString());
+      System.exit(-1);
     }
+  }
+
+  /**
+   * Main method.
+   * 
+   * @param args
+   * @throws IOException
+   */
+  public static void main(String[] args) throws IOException {
+    int exitCode = new CommandLine(new MatrixProxy()).execute(args);
+    System.exit(exitCode);
+  }
 }

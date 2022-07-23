@@ -17,11 +17,11 @@ The state of the project is alpha but its working.
 Clone the repository and use Apache Maven to compile the project.
 
     mvn clean compile package
-    
+
 Copy the single jar-file to a location of your choice
 
     cp target/matrixProxy-0.1.0-jar-with-dependencies.jar ../matrixProxy.jar
-    
+
 
 ## configure
 
@@ -41,9 +41,9 @@ Substitute the values and save the file.
 ## run
 
     java -jar matrixProxy.jar -c /PATH/TO/CONFIG/matrixProxy.conf
-    
+
 matrixProxy is going to write some log messages to `/tmp/MatrixProxy0.log`.
-    
+
 
 ## use
 
@@ -54,13 +54,11 @@ configured user is not member of the given room, it will be added.
     curl -i -H "Content-Type: application/json" -XPOST  http://localhost:7654/matrix/transmit/message --data-binary '{"message": "Hallo123", "room": "#klingel"}'
 
 
+## Docker
+
+    docker run -d -p 0.0.0.0:7654:7654 -v "/etc/matrixProxy:/etc/matrixProxy" -v "$(pwd)/matrix-proxy-logs:/tmp/logs" matrix_proxy
+
+
 ## TODO
 
-* better logging
-* testing
 * caching messages when the server is not reachable
-
-
-
-
-
