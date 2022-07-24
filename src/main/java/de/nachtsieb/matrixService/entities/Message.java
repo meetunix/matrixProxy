@@ -2,64 +2,53 @@ package de.nachtsieb.matrixService.entities;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-/**
- * Represents the incomming message that will be redirected to the Matrix homeserver. 
- */
+/** Represents the incomming message that will be redirected to the Matrix homeserver. */
 @XmlRootElement
 public class Message {
-	
-	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	private String timeString;
-	private String message;
-	private String room;
-	private SimpleDateFormat sdf;
+  private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	public Message() { 
-		setTimeString();
-	}
-	
-	private void setTimeString() {
-		sdf = new SimpleDateFormat(DATE_FORMAT);
-		this.timeString = sdf.format(new Date());
-	}
-	
-	
-	/** GETTER/SETTER **/
-	
-	public String getTimeString() {
-		return timeString;
-	}
+  private String timeString;
+  private String message;
+  private String room;
 
-	public String getMessage() {
-		return message;
-	}
+  public Message() {
+    setTimeString();
+  }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+  private void setTimeString() {
+    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+    this.timeString = sdf.format(new Date());
+  }
 
-	public String getRoom() {
-		return room;
-	}
+  /** GETTER/SETTER * */
+  public String getTimeString() {
+    return timeString;
+  }
 
-	public void setRoom(String room) {
-		this.room = room;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	@Override
-	public String toString() {
-		
-		StringBuilder sb = new StringBuilder("---- MESSAGE ----");
-		sb.append(String.format("\n%-10s %20s\n","TIME:" , timeString));
-		sb.append(String.format("%-10s %20s\n","ROOM:", room));
-		sb.append(String.format("%-10s\n%s\n","MESSAGE:", message));
-		
-		return sb.toString();
-	}
+  public void setMessage(String message) {
+    this.message = message;
+  }
 
+  public String getRoom() {
+    return room;
+  }
+
+  public void setRoom(String room) {
+    this.room = room;
+  }
+
+  @Override
+  public String toString() {
+
+    return "---- MESSAGE ----" + String.format("\n%-10s %20s\n", "TIME:", timeString)
+        + String.format("%-10s %20s\n", "ROOM:", room)
+        + String.format("%-10s\n%s\n", "MESSAGE:", message);
+  }
 }
