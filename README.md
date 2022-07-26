@@ -8,8 +8,8 @@ The state of the project is alpha but its working.
 
 ## prerequisites
 
-1. You need a running Matrix homerserver
-2. On this homeserver you need a user with valid password (other login types are not supported)
+1. You need a running Matrix home-server
+2. On this home-server you need a user with valid password (other login types are not supported)
 3. There must be a room where the user is member of or the user can join
 
 ## installation

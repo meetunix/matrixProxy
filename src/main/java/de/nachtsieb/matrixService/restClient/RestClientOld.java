@@ -1,5 +1,8 @@
 package de.nachtsieb.matrixService.restClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.nachtsieb.logging.MatrixLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,15 +10,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.nachtsieb.logging.MatrixLogger;
-
 public class RestClientOld implements RestClient {
 
 	// jackson databinding
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 	
 	public RestClientOld() {
 		this.mapper = new ObjectMapper();
@@ -57,8 +55,7 @@ public class RestClientOld implements RestClient {
 			br.close();
 
             if (responseCode == 200) {
-				JsonNode jsonNode = mapper.readTree(response);
-				return jsonNode;
+							return mapper.readTree(response);
             }else {
             	MatrixLogger.severe("bad response from homeserver: " + response);
             	return null;

@@ -2,6 +2,7 @@ package de.nachtsieb.matrixService.entities;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /** Represents the incomming message that will be redirected to the Matrix homeserver. */
@@ -42,6 +43,24 @@ public class Message {
 
   public void setRoom(String room) {
     this.room = room;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Message message1 = (Message) o;
+    return Objects.equals(timeString, message1.timeString) && Objects.equals(
+        message, message1.message) && Objects.equals(room, message1.room);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(timeString, message, room);
   }
 
   @Override

@@ -33,7 +33,7 @@ public class MatrixResource {
       ObjectMapper mapper = new ObjectMapper();
       Message msg = mapper.readValue(postString, Message.class);
 
-      MatrixLogger.finer("request arrived for room " + msg.getRoom());
+      MatrixLogger.finer("request for room " + msg.getRoom() + " arrived");
 
       MatrixClient mxClient =
           new MatrixClientImpl(
@@ -47,13 +47,13 @@ public class MatrixResource {
 
     } catch (JsonMappingException e) {
       MatrixLogger.severe("unable to bind request to Message class");
-      MatrixLogger.severe(e.toString());
+      MatrixLogger.severe(e.getMessage());
     } catch (JsonProcessingException e) {
       MatrixLogger.severe("unable to parse the json-request");
-      MatrixLogger.severe(e.toString());
+      MatrixLogger.severe(e.getMessage());
     } catch (URISyntaxException e) {
       MatrixLogger.severe("URI not valid");
-      MatrixLogger.severe(e.toString());
+      MatrixLogger.severe(e.getMessage());
     }
 
     // matches if one of the above exceptions is thrown
