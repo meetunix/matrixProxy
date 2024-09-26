@@ -4,37 +4,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class MatrixLogin {
-	
-	String type;
-	String user;
-	String password;
 
-	public MatrixLogin() {}
+  String type;
+  String user;
+  String password;
 
-	public String getType() {
-		return type;
-	}
+  public MatrixLogin() {}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public String getUser() {
-		return user;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+  public String getUser() {
+    return user;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	
+  public String getPassword() {
+    return password;
+  }
 
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }
