@@ -1,41 +1,28 @@
 package de.nachtsieb.matrixService;
 
+import java.util.EnumMap;
 import javax.inject.Singleton;
 
 @Singleton
 public class MatrixProxyConfig {
 
-  private String homeserver;
-  private String login;
-  private String password;
+  private final EnumMap<Configuration, String> config;
 
-  MatrixProxyConfig(String homeserver, String login, String password) {
-    this.setHomeserver(homeserver);
-    this.setLogin(login);
-    this.setPassword(password);
+  MatrixProxyConfig(EnumMap<Configuration, String> config) {
+    this.config = config;
   }
 
   public String getHomeserver() {
-    return homeserver;
-  }
-
-  private void setHomeserver(String homeserver) {
-    this.homeserver = homeserver;
+    return config.get(Configuration.HOMESERVER_URL);
   }
 
   public String getLogin() {
-    return login;
+    return config.get(Configuration.HOMESERVER_USER);
   }
 
-  private void setLogin(String login) {
-    this.login = login;
-  }
 
   public String getPassword() {
-    return password;
+    return config.get(Configuration.HOMESERVER_PASS);
   }
 
-  private void setPassword(String password) {
-    this.password = password;
-  }
 }

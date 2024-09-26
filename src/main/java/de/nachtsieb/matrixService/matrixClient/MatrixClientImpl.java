@@ -146,11 +146,7 @@ public class MatrixClientImpl implements MatrixClient {
   @Override
   public void logout() throws MatrixClientException {
 
-    String requestURL = homeserver
-        + BASE_API
-        + "/logout"
-        + "?access_token="
-        + accessToken;
+    String requestURL = homeserver + BASE_API + "/logout" + "?access_token=" + accessToken;
 
     JsonNode node = rest.doRequest(requestURL, "{}", RestClient.HTTP_METHOD_POST);
 

@@ -47,7 +47,8 @@ public class Message {
   @Override
   public String toString() {
 
-    return "---- MESSAGE ----" + String.format("\n%-10s %20s\n", "TIME:", timeString)
+    return "---- MESSAGE ----"
+        + String.format("\n%-10s %20s\n", "TIME:", timeString)
         + String.format("%-10s %20s\n", "ROOM:", room)
         + String.format("%-10s\n%s\n", "MESSAGE:", message);
   }

@@ -9,6 +9,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.EnumMap;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -31,17 +32,16 @@ import picocli.CommandLine.Option;
     description = "A tiny Matrix proxy for sending simple text messages to a room",
     mixinStandardHelpOptions = true,
     name = "matrixProxy",
-    version = "matrixProxy 0.2.2")
+    version = "matrixProxy 0.3.0")
 public class MatrixProxy implements Callable<String> {
 
   @Option(
       names = {"-v", "--verbose"},
-      description = "Be more verbose")
+      description = "Log more than just info.")
   private boolean verbose = false;
 
   @Option(
       names = {"-c", "--conf"},
-      required = true,
       description = "full path to the config file")
   private String confFilePath = null;
 
@@ -71,6 +71,7 @@ public class MatrixProxy implements Callable<String> {
 
     // create and start a new instance of grizzly http server
     // exposing the Jersey application at baseURI
+    MatrixLogger.info("Starting grizzly http server on " + baseURI);
     return GrizzlyHttpServerFactory.createHttpServer(URI.create(baseURI), rc);
   }
 
@@ -79,13 +80,21 @@ public class MatrixProxy implements Callable<String> {
 
     MatrixLogger.initiate(verbose);
 
-    loadConfFile(confFilePath);
+    loadConfig(confFilePath);
 
     final HttpServer server = startServer();
 
     try {
 
-      while (true) Thread.sleep(1000);
+      while (true) {
+        try{
+
+          Thread.sleep(1000);
+
+        } catch (InterruptedException e) {
+          System.exit(1);
+        }
+      }
 
     } catch (Exception e) {
 
@@ -94,37 +103,53 @@ public class MatrixProxy implements Callable<String> {
     }
   }
 
-  private void loadConfFile(String confFilePath) {
-
-    Properties props = new Properties();
+  private void loadConfig(String confFilePath) {
 
     try {
 
-      Path path = Paths.get(confFilePath);
-      InputStream is = Files.newInputStream(path, StandardOpenOption.READ);
-      props.load(is);
+      EnumMap<Configuration, String> config = new EnumMap<>(Configuration.class);
 
-      baseURI = props.getProperty("BASE_URL");
-      String homeserver = props.getProperty("HOMESERVER_URL");
-      String login = props.getProperty("HOMESERVER_USER");
-      String password = props.getProperty("HOMESERVER_PASS");
+      Properties props = new Properties();
 
-      conf = new MatrixProxyConfig(homeserver, login, password);
+      if (confFilePath != null) {
+        MatrixLogger.info(
+            "Config file provided (has precedence over environment variables):" + confFilePath);
+        Path path = Paths.get(confFilePath);
+        InputStream is = Files.newInputStream(path, StandardOpenOption.READ);
+        props.load(is);
+
+        for (Configuration confEntry : Configuration.values()) {
+          String confValue = props.getProperty(confEntry.name());
+          if (confValue == null)
+            throw new IOException(
+                "Configuration value " + confEntry.name() + " not set in configuration file.");
+          config.put(confEntry, confValue);
+        }
+      } else {
+        MatrixLogger.info("No config file provided, using environment variables for configuration");
+        for (Configuration confEntry : Configuration.values()) {
+          String confValue = System.getenv(confEntry.name());
+          if (confValue == null)
+            throw new IOException("Missing environment variable " + confEntry.name() + ".");
+          config.put(confEntry, confValue);
+        }
+      }
+
+      baseURI = config.get(Configuration.BASE_URL);
+      conf = new MatrixProxyConfig(config);
 
       MatrixLogger.info(
-          "using config file "
-              + confFilePath
-              + "\nbase URI: "
+          "base URI: "
               + baseURI
-              + "\nhomeserver: "
-              + homeserver
-              + "\nlogin: "
-              + login
-              + "\n");
+              + " | homeserver: "
+              + conf.getHomeserver()
+              + " | login: "
+              + conf.getLogin());
 
-    } catch (InvalidPathException | IOException e) {
+    } catch (InvalidPathException pathEx) {
       MatrixLogger.severe("unable to load config file from given path " + confFilePath);
-      MatrixLogger.severe(e.toString());
+    } catch (IOException ioEx) {
+      MatrixLogger.severe(ioEx.toString());
       System.exit(1);
     }
   }

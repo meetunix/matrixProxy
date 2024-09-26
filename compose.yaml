@@ -1,0 +1,11 @@
+services:
+  matrix-proxy:
+    image: matrix-proxy
+    pull_policy: if_not_present
+    restart: unless-stopped
+    hostname: matrix-proxy
+    environment:
+      BASE_URL: 0.0.0.0:7654
+      HOMESERVER_URL: ${HOMESERVER_URL}
+      HOMESERVER_USER: ${HOMESERVER_USER}
+      HOMESERVER_PASS: ${HOMESERVER_PASS}
