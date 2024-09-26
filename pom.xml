@@ -7,7 +7,7 @@
 	<groupId>de.nachtsieb</groupId>
 	<artifactId>matrixProxy</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.3</version>
+	<version>0.3.0</version>
 	<name>matrixProxy</name>
 
 	<dependencyManagement>
