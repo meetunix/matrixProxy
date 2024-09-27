@@ -6,18 +6,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class MatrixMessage {
 
-  String msgtype;
   String body;
+  String formatted_body;
+  final String format = "org.matrix.custom.html";
+  final String msgtype = "m.text";
+
 
   public MatrixMessage() {}
-
-  public String getMsgtype() {
-    return msgtype;
-  }
-
-  public void setMsgtype(String msgtype) {
-    this.msgtype = msgtype;
-  }
 
   public String getBody() {
     return body;
@@ -25,5 +20,21 @@ public class MatrixMessage {
 
   public void setBody(String body) {
     this.body = body;
+  }
+
+  public String getFormatted_body() {
+    return formatted_body;
+  }
+
+  public String getMsgtype() {
+    return msgtype;
+  }
+
+  public String getFormat() {
+    return format;
+  }
+
+  public void setFormatted_body(String formatted_body) {
+    this.formatted_body = formatted_body;
   }
 }

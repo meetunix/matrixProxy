@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/** Represents the incomming message that will be redirected to the Matrix homeserver. */
+/** Represents the incoming message that will be redirected to the Matrix homeserver. */
 @XmlRootElement
 public class Message {
 

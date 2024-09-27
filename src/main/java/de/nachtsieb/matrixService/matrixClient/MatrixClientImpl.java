@@ -3,6 +3,10 @@ package de.nachtsieb.matrixService.matrixClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import de.nachtsieb.logging.MatrixLogger;
 import de.nachtsieb.matrixService.entities.MatrixLogin;
 import de.nachtsieb.matrixService.entities.MatrixMessage;
@@ -55,6 +59,9 @@ public class MatrixClientImpl implements MatrixClient {
 
   private final ObjectMapper mapper;
 
+  private final Parser markdownParser;
+  private final HtmlRenderer htmlRenderer;
+
   public MatrixClientImpl(String user, String pass, String room, String homeserver)
       throws JsonProcessingException, URISyntaxException, MatrixClientException {
 
@@ -68,6 +75,11 @@ public class MatrixClientImpl implements MatrixClient {
 
     this.accessToken = loginAndGetAccessToken();
     this.roomID = joinRoomAndGetRoomID();
+
+    MutableDataSet options = new MutableDataSet();
+    options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+    markdownParser = Parser.builder(options).build();
+    htmlRenderer = HtmlRenderer.builder(options).build();
   }
 
   /**
@@ -127,13 +139,16 @@ public class MatrixClientImpl implements MatrixClient {
             + "/rooms/"
             + roomID
             + "/send/m.room.message/"
-            + getRandomInteger(1, 9999)
+            + getRandomInteger(1, 999999999)
             + "?access_token="
             + accessToken;
 
+    Node document = markdownParser.parse(message);
+    String formattedMessage = htmlRenderer.render(document);
+
     MatrixMessage mxMessage = new MatrixMessage();
     mxMessage.setBody(message);
-    mxMessage.setMsgtype("m.text");
+    mxMessage.setFormatted_body(formattedMessage);
 
     String jsonRequest = mapper.writeValueAsString(mxMessage);
     JsonNode node = rest.doRequest(requestURL, jsonRequest, RestClient.HTTP_METHOD_PUT);
