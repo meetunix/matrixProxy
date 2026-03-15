@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - 2026-03-15
+
+- bumped jersey and picocli to latest available version
+
 ## [0.3.1] - 2024-09-27
 
 - add markdown parser
