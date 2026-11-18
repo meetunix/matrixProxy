@@ -7,7 +7,7 @@
 	<groupId>de.nachtsieb</groupId>
 	<artifactId>matrixProxy</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.2</version>
+	<version>0.3.3</version>
 	<name>matrixProxy</name>
 
 	<dependencyManagement>
@@ -18,6 +18,22 @@
 				<version>${jersey.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<!-- jackson 2.18.12 fixes all known CVEs of the 2.18.0 line
+				(jackson-core DoS/ReDoS, jackson-databind validator bypasses) -->
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>2.18.12</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- jsoup is pulled transitively via flexmark-html2md-converter (not
+				used by this app); bumped to fix CVE-2026-71497 and CVE-2026-75140 -->
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.24.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

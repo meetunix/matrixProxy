@@ -58,6 +58,24 @@ room.
     curl -i -H "Content-Type: application/json" -XPOST  http://localhost:7654/matrix/transmit/message --data-binary '{"message": "Hallo123", "room": "#doorbell"}'
 
 
+## Security
+
+matrixProxy must run on a JVM that contains the fix for CVE-2026-114938
+("Java4Shell"), a critical remote-code-execution flaw in the AVX-512
+accelerated Base64 decoder of OpenJDK 17.0.6+/21/25/27. Only x86-64 hosts
+whose CPU supports AVX-512 VBMI are affected; ARM64 hosts (e.g. AWS Graviton)
+are not.
+
+* The docker image pins `amazoncorretto:21.0.13-alpine` (Corretto 21.0.13.1.2,
+  Amazon Corretto November 2026 CSPU) and refuses to build if the base image
+  does not contain the fix. Rebuild with `docker build --pull` so the pinned
+  tag is actually refreshed.
+* Outside docker, run the jar with Corretto 21.0.13.1.2 or later, or with any
+  JDK whose vendor confirms the fix (e.g. Oracle 21.0.13.1, Temurin 21.0.13.1+1).
+* If no patched runtime is available yet, the JVM flag
+  `-XX:-UseBASE64Intrinsics` disables the vulnerable code path as an interim
+  mitigation.
+
 ## TODO
 
 * message formatting (markdown)
